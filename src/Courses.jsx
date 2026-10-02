@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
-import Course from "./artco";
-import Contact from "./contact.jsx";
+import React, { useState } from "react";
+import Course from "./artco.jsx";
 import Upload from "./Upload.jsx";
 import About from "./About.jsx";
-import Viewcourses from "./Viewcourses.jsx"
-import { Link } from "react-router-dom";
+import Contact from "./contact.jsx";
 import "./index.css";
 
 const sampleCourses = [
@@ -14,9 +12,9 @@ const sampleCourses = [
     price: 49,
     rating: "4.8 ⭐",
     image: "/cartoon.jpg",
-    description: "Learn bold cartoon characters, expressions.",
+    description: "Learn bold cartoon characters and expressions.",
     duration: "4 weeks",
-    level: "Beginner"
+    level: "Beginner",
   },
   {
     id: 2,
@@ -24,9 +22,9 @@ const sampleCourses = [
     price: 79,
     rating: "4.9 ⭐",
     image: "/figure.jpg",
-    description: "Master human anatomy, pose drawing.",
+    description: "Master human anatomy and pose drawing.",
     duration: "6 weeks",
-    level: "Intermediate"
+    level: "Intermediate",
   },
   {
     id: 3,
@@ -34,9 +32,9 @@ const sampleCourses = [
     price: 39,
     rating: "4.7 ⭐",
     image: "/portrait.jpg",
-    description: "Explore facial features, shading.",
+    description: "Explore facial features and shading.",
     duration: "3 weeks",
-    level: "Beginner"
+    level: "Beginner",
   },
   {
     id: 4,
@@ -44,9 +42,9 @@ const sampleCourses = [
     price: 49,
     rating: "4.6 ⭐",
     image: "/landscape.jpg",
-    description: "Create scenic compositions with depth, texture.",
+    description: "Create scenic compositions with depth and texture.",
     duration: "5 weeks",
-    level: "Intermediate"
+    level: "Intermediate",
   },
   {
     id: 5,
@@ -56,7 +54,7 @@ const sampleCourses = [
     image: "/watercolor.jpg",
     description: "Discover watercolor techniques and color theory.",
     duration: "4 weeks",
-    level: "Beginner"
+    level: "Beginner",
   },
   {
     id: 6,
@@ -64,199 +62,316 @@ const sampleCourses = [
     price: 69,
     rating: "4.9 ⭐",
     image: "/oilpainting.webp",
-    description: "Learn oil painting, blending, and layering techniques.",
+    description: "Learn oil painting, blending and layering.",
     duration: "6 weeks",
-    level: "Intermediate"
+    level: "Intermediate",
   },
-  {
-    id: 7,
-    name: "Digital Art",
-    price: 70,
-    rating: "4.6 ⭐",
-    image: "\\digital.jpg",
-    description: "Master digital art tools, digital painting, and design",
-    duration: "8 weeks",
-    level: "Beginner"
-  },
-  {
-    id: 8,
-    name: "Art Journal",
-    price: 75,
-    rating: "4.6 ⭐",
-    duration: "8 weeks",
-    image: "\\journal.jpg",
-    description: "Explore mixed-media journaling techniques to develop a personal art practice.",
-    level: "Beginner"
-  }
-
 ];
 
 function CourseList() {
-  const [courses, setCourses] = useState([]);
   const [purchasedCourses, setPurchasedCourses] = useState([]);
   const [points, setPoints] = useState(0);
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-  setCourses(sampleCourses);
+  /* =========================
+     SCROLL TO SECTION
+  ========================= */
 
-  const savedCourses = JSON.parse(
-    localStorage.getItem("purchasedCourses") || "[]"
-  );
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
-  setPurchasedCourses(savedCourses);
-}, []);
-  // BUY COURSE
+  /* =========================
+     BUY COURSE
+  ========================= */
+
   const handleBuyCourse = (course) => {
-  setPurchasedCourses((currentCourses) => {
-
-    const alreadyPurchased = currentCourses.some(
+    const alreadyPurchased = purchasedCourses.some(
       (item) => item.id === course.id
     );
 
     if (alreadyPurchased) {
-      return currentCourses;
+      setMessage(`${course.name} is already purchased ✓`);
+
+      setTimeout(() => {
+        setMessage("");
+      }, 2500);
+
+      return;
     }
 
-    const updatedCourses = [...currentCourses, course];
+    setPurchasedCourses((currentCourses) => [
+      ...currentCourses,
+      course,
+    ]);
 
-    localStorage.setItem(
-      "purchasedCourses",
-      JSON.stringify(updatedCourses)
-    );
-
-    return updatedCourses;
-  });
-};
-
-  // COMPLETE COURSE
-  const handleCourseComplete = () => {
+    // Add 10 points for each NEW course
     setPoints((currentPoints) => currentPoints + 10);
+
+    setMessage(`${course.name} added to My Courses 🎉`);
+
+    setTimeout(() => {
+      setMessage("");
+    }, 2500);
+  };
+
+  /* =========================
+     DELETE COURSE
+  ========================= */
+
+  const handleDeleteCourse = (courseId) => {
+    setPurchasedCourses((currentCourses) =>
+      currentCourses.filter((course) => course.id !== courseId)
+    );
   };
 
   return (
-    <>
-      {/* NAVIGATION */}
-      <div className="journey-header">
+    <div className="app">
 
-      <h1>New Journey</h1>
+      {/* =========================
+          NAVIGATION
+      ========================= */}
 
-      <Link to="/viewcourses">
-          View Courses
-      </Link>
+      <header className="journey-header">
 
-      <Link to="/upload">
-          Upload Photos
-      </Link>
+        <div className="logo">
+          <span>🎨</span>
 
-      <Link to="/about">
-          About Us
-      </Link>
+          <div>
+            <h1>New Journey</h1>
+            <small>Learn • Create • Inspire</small>
+          </div>
+        </div>
 
-      <Link to="/contact">
-          Contact Us
-      </Link>
+        <nav className="nav-buttons">
 
-    </div> 
+          <button
+            type="button"
+            onClick={() => scrollToSection("courses")}
+          >
+            Courses
+          </button>
 
+          <button
+            type="button"
+            onClick={() => scrollToSection("my-courses")}
+          >
+            My Courses
+          </button>
 
-      {/* WELCOME */}
-      <div className="header">
+          <button
+            type="button"
+            onClick={() => scrollToSection("upload")}
+          >
+            Upload
+          </button>
 
-        <h1>
-          Welcome to Your New Journey ✨
-        </h1>
+          <button
+            type="button"
+            onClick={() => scrollToSection("about")}
+          >
+            About
+          </button>
 
-        <h3>
-          By Dhanu ❤️
-        </h3>
+          <button
+            type="button"
+            onClick={() => scrollToSection("contact")}
+          >
+            Contact
+          </button>
 
-      </div>
+        </nav>
 
+        <div className="points-badge">
+          ⭐ {points} Points
+        </div>
 
-      {/* ALL COURSES */}
-      <section id="courses">
+      </header>
 
-        <h2 className="section-title">Available Courses 🎨</h2>
+      {/* =========================
+          PURCHASE MESSAGE
+      ========================= */}
+
+      {message && (
+        <div className="purchase-message">
+          {message}
+        </div>
+      )}
+
+      {/* =========================
+          HERO
+      ========================= */}
+
+      <section className="hero">
+
+        <div className="hero-content">
+
+          <span className="hero-tag">
+            ✨ YOUR CREATIVE JOURNEY
+          </span>
+
+          <h2>
+            Turn Your <span>Creativity</span>
+            <br />
+            Into Beautiful Art
+          </h2>
+
+          <p>
+            Learn drawing, painting and creative skills through
+            simple and enjoyable art courses.
+          </p>
+
+          <button
+            type="button"
+            className="hero-button"
+            onClick={() => scrollToSection("courses")}
+          >
+            Explore Courses →
+          </button>
+
+        </div>
+
+        <div className="hero-art">
+          🎨
+        </div>
+
+      </section>
+
+      {/* =========================
+          COURSES
+      ========================= */}
+
+      <section id="courses" className="section">
+
+        <div className="section-heading">
+
+          <span>LEARN SOMETHING NEW</span>
+
+          <h2>
+            Explore Our Courses
+          </h2>
+
+          <p>
+            Choose a course and start your creative journey.
+          </p>
+
+        </div>
 
         <div className="course-list">
 
-          {courses.map((course) => {
+          {sampleCourses.map((course) => (
 
-            const isPurchased =
-              purchasedCourses.some(
+            <Course
+              key={course.id}
+              course={course}
+              name={course.name}
+              price={course.price}
+              rating={course.rating}
+              image={course.image}
+              description={course.description}
+              duration={course.duration}
+              level={course.level}
+              purchased={purchasedCourses.some(
                 (item) => item.id === course.id
-              );
+              )}
+              onBuy={handleBuyCourse}
+            />
 
-            return (
-              <Course
-                key={course.id}
-
-                course={course}
-
-                name={course.name}
-                price={course.price}
-                rating={course.rating}
-                image={course.image}
-                description={course.description}
-                duration={course.duration}
-                level={course.level}
-
-                purchased={isPurchased}
-
-                onBuy={handleBuyCourse}
-
-                onComplete={handleCourseComplete}
-              />
-            );
-          })}
+          ))}
 
         </div>
 
       </section>
 
+      {/* =========================
+          MY COURSES
+      ========================= */}
 
-      {/* MY COURSES */}
-      <section id="my-courses">
+      <section
+        id="my-courses"
+        className="section alternate-section"
+      >
 
-        <h1 className="section-title">
-          My Courses 📚
-        </h1>
+        <div className="section-heading">
+
+          <span>YOUR COLLECTION</span>
+
+          <h2>
+            My Courses 📚
+          </h2>
+
+          <p>
+            Courses you have purchased will appear here.
+          </p>
+
+        </div>
 
         {purchasedCourses.length === 0 ? (
 
+          /* EMPTY MY COURSES */
+
           <div className="empty-courses">
+
+            <div>📚</div>
+
+            <h3>
+              No Courses Purchased Yet
+            </h3>
+
             <p>
-              You haven't purchased any courses yet.
+              Choose a course above and start learning.
             </p>
 
-            <a href="#courses">
+            <button
+              type="button"
+              onClick={() => scrollToSection("courses")}
+            >
               Browse Courses
-            </a>
+            </button>
+
           </div>
 
         ) : (
+
+          /* PURCHASED COURSES */
 
           <div className="course-list">
 
             {purchasedCourses.map((course) => (
 
-              <Course
+              <div
+                className="my-course-wrapper"
                 key={course.id}
+              >
 
-                course={course}
+                <Course
+                  course={course}
+                  name={course.name}
+                  price={course.price}
+                  rating={course.rating}
+                  image={course.image}
+                  description={course.description}
+                  duration={course.duration}
+                  level={course.level}
+                  purchased={true}
+                />
 
-                name={course.name}
-                price={course.price}
-                rating={course.rating}
-                image={course.image}
-                description={course.description}
-                duration={course.duration}
-                level={course.level}
+                {/* DELETE BUTTON */}
 
-                purchased={true}
+                <button
+                  type="button"
+                  className="delete-course-button"
+                  onClick={() =>
+                    handleDeleteCourse(course.id)
+                  }
+                >
+                  🗑️ Remove Course
+                </button>
 
-                onComplete={handleCourseComplete}
-              />
+              </div>
 
             ))}
 
@@ -266,43 +381,66 @@ function CourseList() {
 
       </section>
 
+      {/* =========================
+          UPLOAD
+      ========================= */}
 
-      {/* POINTS */}
-      <div className="points-display">
+      <section id="upload" className="section">
 
-        🏆 Total Points:
+        <div className="section-heading">
 
-        <span className="points-value">
-          {points}
-        </span>
+          <span>SHARE YOUR CREATIVITY</span>
 
-      </div>
+          <h2>
+            Upload Your Art 🖼️
+          </h2>
 
+          <p>
+            Build your own personal art gallery.
+          </p>
 
-      {/* UPLOAD */}
-      <div id="upload">
+        </div>
 
-        <Upload
-          onUpload={(added) =>
-            setPoints((p) => p + added)
-          }
-        />
+        <Upload />
 
-      </div>
+      </section>
 
+      {/* =========================
+          ABOUT
+      ========================= */}
 
-      {/* ABOUT */}
-      <div id="about">
+      <section
+        id="about"
+        className="section alternate-section"
+      >
         <About />
-      </div>
+      </section>
 
+      {/* =========================
+          CONTACT
+      ========================= */}
 
-      {/* CONTACT */}
-      <div id="contact">
+      <section id="contact" className="section">
         <Contact />
-      </div>
+      </section>
 
-    </>
+      {/* =========================
+          FOOTER
+      ========================= */}
+
+      <footer>
+
+        <h3>
+          🎨 New Journey
+        </h3>
+
+        <p>
+          Keep creating. Keep learning. Keep growing. ✨
+        </p>
+
+      </footer>
+
+    </div>
   );
 }
 

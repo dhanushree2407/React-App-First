@@ -1,108 +1,74 @@
-import PropTypes from "prop-types";
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 function Course(props) {
   const [showDetails, setShowDetails] = useState(false);
-  const [message, setMessage] = useState("");
-
-  const handleBuy = () => {
-    // If already purchased
-    if (props.purchased) {
-      setMessage("Already Purchased ✓");
-
-      setTimeout(() => {
-        setMessage("");
-      }, 2000);
-
-      return;
-    }
-
-    // Add course to My Courses
-    if (typeof props.onBuy === "function") {
-      props.onBuy(props.course);
-    }
-
-    setMessage("Course Added to My Courses ✓");
-
-    setTimeout(() => {
-      setMessage("");
-    }, 2000);
-  };
-
-  const handleComplete = () => {
-    if (typeof props.onComplete === "function") {
-      props.onComplete();
-    }
-  };
 
   return (
-    <div className="course">
+    <div className="course-card">
 
-      <h2>{props.name}</h2>
-
-      {props.image && (
+      <div
+        className="course-image-wrapper"
+        onClick={() => setShowDetails(!showDetails)}
+      >
         <img
           src={props.image}
           alt={props.name}
-          onClick={() => setShowDetails((prev) => !prev)}
+          className="course-image"
         />
-      )}
 
-      {showDetails && (
-        <div className="course-details">
-
-          <p>
-            <strong>Course:</strong> {props.name}
-          </p>
-
-          <p>{props.description}</p>
-
-          <p>
-            <strong>Price:</strong> ${props.price}
-          </p>
-
-          <p>
-            <strong>Rating:</strong> {props.rating}
-          </p>
-
-          <p>
-            <strong>Duration:</strong>{" "}
-            {props.duration || "Not specified"}
-          </p>
-
-          <p>
-            <strong>Level:</strong> {props.level}
-          </p>
-
+        <div className="image-overlay">
+          Click to view details
         </div>
-      )}
+      </div>
 
-      <span>{props.rating}</span>
+      <div className="course-content">
 
-      <p>${props.price}</p>
+        <div className="course-top">
+          <span className="level-badge">
+            {props.level}
+          </span>
 
-      {/* Message */}
-      {message && (
-        <div className="purchase-message">
-          {message}
+          <span className="rating">
+            {props.rating}
+          </span>
         </div>
-      )}
 
-      {/* BUY NOW */}
-      {props.purchased ? (
-      <button className="completed" disabled>
-         Already Purchased ✓
-      </button>
-      ) : (
-      <button
-      className="buy-button"
-      onClick={() => props.onBuy(props.course)}
-      >
-        Buy Now
-      </button>
-    )}
+        <h2>{props.name}</h2>
 
+        {showDetails && (
+          <div className="course-details">
+            <p>{props.description}</p>
 
+            <div className="details-row">
+              <span>⏱️ {props.duration}</span>
+              <span>📚 {props.level}</span>
+            </div>
+          </div>
+        )}
+
+        <div className="course-bottom">
+          <strong>${props.price}</strong>
+
+          {props.purchased ? (
+            <button
+              type="button"
+              className="already-button"
+              disabled
+            >
+              ✓ Already Purchased
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="buy-button"
+              onClick={() => props.onBuy(props.course)}
+            >
+              Buy Now →
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -112,8 +78,8 @@ Course.propTypes = {
   name: PropTypes.string,
   price: PropTypes.number,
   rating: PropTypes.oneOfType([
+    PropTypes.string,
     PropTypes.number,
-    PropTypes.string
   ]),
   image: PropTypes.string,
   description: PropTypes.string,
@@ -121,7 +87,6 @@ Course.propTypes = {
   level: PropTypes.string,
   purchased: PropTypes.bool,
   onBuy: PropTypes.func,
-  onComplete: PropTypes.func
 };
 
 export default Course;
